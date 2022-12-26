@@ -1,0 +1,11 @@
+{
+  "name": "@godwoken-nft-bridge/bridge",
+  "version": "0.0.1",
+  "private": true,
+  "main": "lib/index.js",
+  "scripts": {
+    "fmt": "prettier --write src/* package.json tsconfig.json",
+    "lint": "eslint -c ../../.eslintrc.js \"src/**/*.ts\"",
+    "build": "tsc"
+  }
+}
