@@ -4,8 +4,21 @@
   "private": true,
   "main": "lib/index.js",
   "scripts": {
-    "fmt": "prettier --write src/* package.json tsconfig.json",
-    "lint": "eslint -c ../../.eslintrc.js \"src/**/*.ts\"",
-    "build": "tsc"
+    "fmt": "prettier --write {src,tests}/* package.json tsconfig.json",
+    "lint": "eslint -c ../../.eslintrc.js \"{src,tests}/**/*.ts\"",
+    "build": "tsc",
+    "test": "node --require ts-node/register --test ./tests/*.test.ts"
+  },
+  "dependencies": {
+    "@ckb-lumos/base": "^0.19.0",
+    "@ckb-lumos/config-manager": "^0.19.0",
+    "@ckb-lumos/helpers": "^0.19.0",
+    "blake2b": "^2.1.4",
+    "cross-fetch": "^3.1.5",
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
+    "jsbi": "^4.3.0",
+    "knex": "^2.4.0",
+    "pg": "^8.8.0"
   }
 }
