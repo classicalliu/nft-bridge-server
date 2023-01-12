@@ -1,13 +1,13 @@
 import { initializeConfig, predefined } from "@ckb-lumos/config-manager/lib";
 import { parseAddress } from "@ckb-lumos/helpers";
-import { Config } from "./config";
-import { CkbIndexerRpc } from "./rpc";
+import { Config } from "../base/config";
+import { CkbIndexerRpc } from "../rpc";
 import { HexString } from "@ckb-lumos/base";
-import { NRC721Query } from "./db";
-import { NRC721Token, toFactoryScriptAndTokenId } from "./db/types";
-import { parseFactoryData } from "./utils";
-import { Blake2bHasher } from "./blake2b";
-import { OutPoint, CellResult, SearchKey, Script } from "./types";
+import { NRC721Query } from "../db";
+import { NRC721Token, toFactoryScriptAndTokenId } from "../db/types";
+import { parseFactoryData } from "../base/utils";
+import { Blake2bHasher } from "../base/blake2b";
+import { OutPoint, CellResult, SearchKey, Script } from "../types";
 import { BaseRunner } from "./base_runner";
 
 const NRC721_TOKEN_OUTPUT_DATA_HEADER = "0x0ddeff3e8ee03cbf6a2c6920d05c381e";

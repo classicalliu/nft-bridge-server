@@ -1,6 +1,6 @@
 import { HexString } from "@ckb-lumos/base";
 import Knex, { Knex as KnexType } from "knex";
-import { Config } from "../config";
+import { Config } from "../base/config";
 import { fromHashType, hexToBuffer, Script, OutPoint } from "../types";
 import { DBNRC721Token, fromDB, NRC721Token, toDB } from "./types";
 

@@ -1,7 +1,7 @@
 import { Contract, ethers, Signer, Wallet } from "ethers";
 import { BaseRunner } from "./base_runner";
-import { Config } from "./config";
-import { NRC721Query } from "./db";
+import { Config } from "../base/config";
+import { NRC721Query } from "../db";
 
 const abi = [
   "function mint(address to, uint256 tokenId, string memory name, string memory symbol, string memory uri) external",
