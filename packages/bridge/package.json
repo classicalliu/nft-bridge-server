@@ -7,7 +7,8 @@
     "fmt": "prettier --write {src,tests}/* package.json tsconfig.json",
     "lint": "eslint -c ../../.eslintrc.js \"{src,tests}/**/*.ts\"",
     "build": "tsc",
-    "test": "node --require ts-node/register --test ./tests/*.test.ts"
+    "test": "node --require ts-node/register --test ./tests/*.test.ts",
+    "start": "yarn run build && node lib/index.js"
   },
   "dependencies": {
     "@ckb-lumos/base": "^0.19.0",
