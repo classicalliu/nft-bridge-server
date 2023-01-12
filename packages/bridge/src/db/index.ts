@@ -78,12 +78,15 @@ export class NRC721Query {
     return await this.knex<DBNRC721Token>(this.tableName).insert(dbToken);
   }
 
-  async saveIfNotExists(token: NRC721Token) {
+  // If already exists, return false
+  // If saved, return true
+  async saveIfNotExists(token: NRC721Token): Promise<boolean> {
     const one = await this.getOneByOutPoint(token.out_point);
     if (one != null) {
-      return one;
+      return false;
     }
-    return await this.save(token)
+    await this.save(token)
+    return true
   }
 
   async updateToMined(layer2_token_id: bigint) {

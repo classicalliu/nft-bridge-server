@@ -78,20 +78,27 @@ export class NftCellCollector extends BaseRunner {
       afterCursor = cells.last_cursor;
 
       for (let i = 0; i < cells.objects.length; i++) {
-        const cell: CellResult = cells.objects[0];
+        const cell: CellResult = cells.objects[i];
         if (this.isNrc721Cell(cell.output_data)) {
           const token: NRC721Token = await this.generateNRC721Token(cell);
+          let isSaved;
           try {
-            await this.query.saveIfNotExists(token);
+            isSaved = await this.query.saveIfNotExists(token);
           } catch (err) {
             console.error(
               `NRC721 token ${this.printOutPoint(cell.out_point)} save failed!`
             );
             throw err;
           }
-          console.log(
-            `NRC721 token ${this.printOutPoint(cell.out_point)} saved!`
-          );
+          if (isSaved) {
+            console.log(
+              `NRC721 token ${this.printOutPoint(cell.out_point)} saved!`
+            );
+          } else {
+            console.warn(
+              `NRC721 token ${this.printOutPoint(cell.out_point)} already exists!`
+            );
+          }
         }
       }
 
