@@ -16,8 +16,6 @@ const GLOBAL_KNEX = Knex({
 
 export class NRC721Query {
   private knex: KnexType;
-  private tokenTableName = "nrc721_tokens";
-  private factoryScriptTableName = "nrc721_factory_scripts"
 
   constructor() {
     this.knex = GLOBAL_KNEX;
@@ -25,7 +23,7 @@ export class NRC721Query {
 
   async *collectNonMinedTokens(): AsyncGenerator<NRC721.TokenWithFactoryScript> {
     const tokensLimit = 100;
-    const tokens = await this.knex<NRC721.Token.DBStruct>(this.tokenTableName)
+    const tokens = await this.knex<NRC721.Token.DBStruct>(NRC721.Token.DB_TABLE_NAME)
       .where({
         layer2_has_mined: false
       })
@@ -33,7 +31,7 @@ export class NRC721Query {
 
     const factoryIds: string[] = tokens.map(t => t.factory_id!);
 
-    const factories = await this.knex<NRC721.FactoryScript.DBStruct>(this.factoryScriptTableName)
+    const factories = await this.knex<NRC721.FactoryScript.DBStruct>(NRC721.FactoryScript.DB_TABLE_NAME)
       .whereIn("id", factoryIds);
 
     const mapping = new Map<string, NRC721.FactoryScript.DBStruct>();
@@ -53,14 +51,14 @@ export class NRC721Query {
   }
 
   async getTokenTipBlockNumber(): Promise<bigint> {
-    const blockNumber = await this.knex<NRC721.Token.DBStruct>(this.tokenTableName).max("block_number");
+    const blockNumber = await this.knex<NRC721.Token.DBStruct>(NRC721.Token.DB_TABLE_NAME).max("block_number");
 
     const tip = blockNumber[0].max;
     return BigInt(tip)
   }
 
   async getOneByOutPoint(outPoint: OutPoint): Promise<NRC721.TokenWithFactoryScript | undefined> {
-    const token = await this.knex<NRC721.Token.DBStruct>(this.tokenTableName) 
+    const token = await this.knex<NRC721.Token.DBStruct>(NRC721.Token.DB_TABLE_NAME)
       .where({
         out_point_tx_hash: hexToBuffer(outPoint.tx_hash),
         out_point_index: +outPoint.index,
@@ -70,7 +68,7 @@ export class NRC721Query {
       return undefined;
     }
 
-    const factoryScript = await this.knex<NRC721.FactoryScript.DBStruct>(this.factoryScriptTableName)
+    const factoryScript = await this.knex<NRC721.FactoryScript.DBStruct>(NRC721.FactoryScript.DB_TABLE_NAME)
       .where({
         id: token.factory_id!.toString(),
       })
@@ -91,7 +89,7 @@ export class NRC721Query {
     factoryScript: Script,
     layer1TokenId: HexString
   ): Promise<NRC721.TokenWithFactoryScript | undefined> {
-    const factory = await this.knex<NRC721.FactoryScript.DBStruct>(this.factoryScriptTableName)
+    const factory = await this.knex<NRC721.FactoryScript.DBStruct>(NRC721.FactoryScript.DB_TABLE_NAME)
       .where({
         code_hash: hexToBuffer(factoryScript.code_hash),
         hash_type: fromHashType(factoryScript.hash_type),
@@ -103,7 +101,7 @@ export class NRC721Query {
       return undefined;
     }
 
-    const token = await this.knex<NRC721.Token.DBStruct>(this.tokenTableName)
+    const token = await this.knex<NRC721.Token.DBStruct>(NRC721.Token.DB_TABLE_NAME)
       .where({
         factory_id: factory.id!.toString(),
         layer1_token_id: hexToBuffer(layer1TokenId),
@@ -122,7 +120,7 @@ export class NRC721Query {
   }
 
   private async saveFactoryScriptIfNotExists(factoryScript: NRC721.FactoryScript.DBStruct, now: Date): Promise<bigint> {
-    const one = await this.knex<NRC721.FactoryScript.DBStruct>(this.factoryScriptTableName)
+    const one = await this.knex<NRC721.FactoryScript.DBStruct>(NRC721.FactoryScript.DB_TABLE_NAME)
       .where({
         code_hash: factoryScript.code_hash,
         hash_type: factoryScript.hash_type,
@@ -138,7 +136,7 @@ export class NRC721Query {
     factoryScript.created_at = now;
     factoryScript.updated_at = now;
 
-    const result = await this.knex<NRC721.FactoryScript.DBStruct>(this.factoryScriptTableName)
+    const result = await this.knex<NRC721.FactoryScript.DBStruct>(NRC721.FactoryScript.DB_TABLE_NAME)
       .insert(factoryScript).returning("id");
 
     return BigInt(result[0].id!);
@@ -155,7 +153,7 @@ export class NRC721Query {
     dbToken.updated_at = now;
     dbToken.factory_id = id.toString();
 
-    return await this.knex<NRC721.Token.DBStruct>(this.tokenTableName).insert(dbToken);
+    return await this.knex<NRC721.Token.DBStruct>(NRC721.Token.DB_TABLE_NAME).insert(dbToken);
   }
 
   // If already exists, return false
@@ -171,6 +169,6 @@ export class NRC721Query {
 
   async updateToMined(layer2_token_id: bigint) {
     const now = new Date();
-    await this.knex<NRC721.Token.DBStruct>(this.tokenTableName).where({ layer2_token_id: layer2_token_id.toString() }).update({ layer2_has_mined: true, updated_at: now })
+    await this.knex<NRC721.Token.DBStruct>(NRC721.Token.DB_TABLE_NAME).where({ layer2_token_id: layer2_token_id.toString() }).update({ layer2_has_mined: true, updated_at: now })
   }
 }

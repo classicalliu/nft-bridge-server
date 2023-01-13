@@ -25,6 +25,8 @@ export namespace NRC721 {
       updated_at?: Date
     }
 
+    export const DB_TABLE_NAME = "nrc721_factory_scripts";
+
     export interface DBStruct {
       id?: string
     
@@ -117,6 +119,8 @@ export namespace NRC721 {
       created_at?: Date;
       updated_at?: Date;
     }
+
+    export const DB_TABLE_NAME = "nrc721_tokens";
 
     export interface DBStruct {
       id?: string;
