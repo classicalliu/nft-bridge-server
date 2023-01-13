@@ -2,7 +2,7 @@ import { Contract, ethers, Signer, Wallet } from "ethers";
 import { BaseRunner } from "./base_runner";
 import { Config } from "../base/config";
 import { NRC721Query } from "../db";
-import { getTokenUri } from "../db/types";
+import { NRC721 } from "../db/types";
 
 const abi = [
   "function mint(address to, uint256 tokenId, string memory name, string memory symbol, string memory uri) external",
@@ -34,7 +34,7 @@ export class Miner extends BaseRunner {
   public async poll() {
     for await (const { token, factory_script: factoryScript } of this.query.collectNonMinedTokens()) {
       try {
-        const uri: string = getTokenUri(factoryScript.base_uri, token.layer1_token_id)
+        const uri: string = NRC721.Funcs.getTokenUri(factoryScript.base_uri, token.layer1_token_id)
         //TODO: check mined firstly
         await this.mine(
           token.layer2_to_address,

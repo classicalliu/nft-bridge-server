@@ -4,11 +4,11 @@ import { Config } from "../base/config";
 import { CkbIndexerRpc } from "../rpc";
 import { HexString } from "@ckb-lumos/base";
 import { NRC721Query } from "../db";
-import { NRC721FactoryScript, NRC721Token, NRC721TokenWithFactoryScript, toFactoryScriptAndTokenId } from "../db/types";
 import { parseFactoryData } from "../base/utils";
 import { Blake2bHasher } from "../base/blake2b";
 import { OutPoint, CellResult, SearchKey, Script } from "../types";
 import { BaseRunner } from "./base_runner";
+import { NRC721 } from "../db/types";
 
 const NRC721_TOKEN_OUTPUT_DATA_HEADER = "0x0ddeff3e8ee03cbf6a2c6920d05c381e";
 
@@ -97,7 +97,7 @@ export class NFTCellCollector extends BaseRunner {
             continue
           }
 
-          const tokenWithFactoryScript: NRC721TokenWithFactoryScript = await this.generateNRC721Token(cell, layer2ToAddress);
+          const tokenWithFactoryScript: NRC721.TokenWithFactoryScript = await this.generateNRC721Token(cell, layer2ToAddress);
           let isSaved;
           try {
             isSaved = await this.query.saveIfNotExists(tokenWithFactoryScript);
@@ -133,14 +133,14 @@ export class NFTCellCollector extends BaseRunner {
     return `{tx_hash: ${outPoint.tx_hash}, index: ${outPoint.index}}`;
   }
 
-  private async generateNRC721Token(cell: CellResult, layer2ToAddress: HexString): Promise<NRC721TokenWithFactoryScript> {
-    const { factoryScript, layer1TokenId } = toFactoryScriptAndTokenId(
+  private async generateNRC721Token(cell: CellResult, layer2ToAddress: HexString): Promise<NRC721.TokenWithFactoryScript> {
+    const { factoryScript, layer1TokenId } = NRC721.Funcs.toFactoryScriptAndTokenId(
       cell.output.type!.args
     );
     const factoryCell = await this.indexerRPC.get_factory_cell(factoryScript);
     const tokenInfo = parseFactoryData(factoryCell.output_data);
 
-    const factory: NRC721FactoryScript = {
+    const factory: NRC721.FactoryScript.Struct = {
       out_point: factoryCell.out_point,
 
       script: factoryScript,
@@ -152,7 +152,7 @@ export class NFTCellCollector extends BaseRunner {
       extra_data: tokenInfo.extraData,
     }
 
-    const token: NRC721Token = {
+    const token: NRC721.Token.Struct = {
       out_point: {
         tx_hash: cell.out_point.tx_hash,
         index: cell.out_point.index,
