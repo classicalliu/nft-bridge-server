@@ -4,7 +4,7 @@
   "private": true,
   "main": "lib/index.js",
   "scripts": {
-    "fmt": "prettier --write {src,tests}/* package.json tsconfig.json",
+    "fmt": "prettier --write {src,tests}/**/* package.json tsconfig.json",
     "lint": "eslint -c ../../.eslintrc.js \"{src,tests}/**/*.ts\"",
     "build": "tsc",
     "test": "node --require ts-node/register --test ./tests/*.test.ts",

@@ -1,5 +1,11 @@
 import { HexNumber } from "@ckb-lumos/base";
-import { SearchKey, CellResult, GetCellsResult, TipResult, Script } from "../types"
+import {
+  SearchKey,
+  CellResult,
+  GetCellsResult,
+  TipResult,
+  Script,
+} from "../types";
 import { RPC } from "./base";
 
 export class CkbIndexerRpc {

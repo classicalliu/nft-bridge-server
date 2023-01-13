@@ -32,16 +32,22 @@ export class Miner extends BaseRunner {
   }
 
   public async poll() {
-    for await (const { token, factory_script: factoryScript } of this.query.collectNonMinedTokens()) {
+    for await (const {
+      token,
+      factory_script: factoryScript,
+    } of this.query.collectNonMinedTokens()) {
       try {
-        const uri: string = NRC721.Funcs.getTokenUri(factoryScript.base_uri, token.layer1_token_id)
+        const uri: string = NRC721.Funcs.getTokenUri(
+          factoryScript.base_uri,
+          token.layer1_token_id
+        );
         //TODO: check mined firstly
         await this.mine(
           token.layer2_to_address,
           token.layer2_token_id,
           factoryScript.name,
           factoryScript.symbol,
-          uri,
+          uri
         );
         console.log(`layer2 token mined: ${token.layer2_token_id}`);
         await this.query.updateToMined(token.layer2_token_id);

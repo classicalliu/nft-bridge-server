@@ -13,11 +13,11 @@ import { NRC721 } from "../db/types";
 const NRC721_TOKEN_OUTPUT_DATA_HEADER = "0x0ddeff3e8ee03cbf6a2c6920d05c381e";
 
 const layer2AddressHeader: HexString = (() => {
-  const blake2b = new Blake2bHasher()
-  blake2b.update(Buffer.from("NRC-721-ADDRESS", "utf-8"))
+  const blake2b = new Blake2bHasher();
+  blake2b.update(Buffer.from("NRC-721-ADDRESS", "utf-8"));
   // return first 4 bytes
-  return blake2b.digestHex().slice(0, 10)
-})()
+  return blake2b.digestHex().slice(0, 10);
+})();
 
 console.log("layer2 address header:", layer2AddressHeader);
 
@@ -36,7 +36,9 @@ export class NFTCellCollector extends BaseRunner {
     this.indexerRPC = new CkbIndexerRpc(Config.ckbIndexerRpc);
 
     const lumosConfig = Config.isMainnet ? predefined.LINA : predefined.AGGRON4;
-    const script = parseAddress(Config.minerLayer1Address, { config: lumosConfig });
+    const script = parseAddress(Config.minerLayer1Address, {
+      config: lumosConfig,
+    });
 
     this.minerLockScript = {
       code_hash: script.codeHash,
@@ -55,17 +57,16 @@ export class NFTCellCollector extends BaseRunner {
   }
 
   public async startForever() {
-    this.query.getTokenTipBlockNumber()
-      .then((tipBlockNumber) => {
-        console.log("from db tip block number:", tipBlockNumber)
-        this.lastIndexerTip = tipBlockNumber
-        return super.startForever()
-      })
+    const tipBlockNumber = await this.query.getTokenTipBlockNumber();
+    console.log("from db tip block number:", tipBlockNumber);
+    this.lastIndexerTip = tipBlockNumber;
+    return super.startForever();
   }
 
   public async poll() {
     const currentIndexerTip: bigint = await this.getIndexerTipNumber();
-    const blockRangeMax = currentIndexerTip - BigInt(Config.confirmationsThreshold);
+    const blockRangeMax =
+      currentIndexerTip - BigInt(Config.confirmationsThreshold);
 
     if (blockRangeMax <= this.lastIndexerTip) {
       return 500;
@@ -100,13 +101,18 @@ export class NFTCellCollector extends BaseRunner {
           // Skip cell not include layer2 to address info
           let layer2ToAddress;
           try {
-            layer2ToAddress = parseLayer2Address(cell.output_data)
+            layer2ToAddress = parseLayer2Address(cell.output_data);
           } catch (err: any) {
-            console.error(`skip cell: ${this.printOutPoint(cell.out_point)} for ${err.message}`)
-            continue
+            console.error(
+              `skip cell: ${this.printOutPoint(cell.out_point)} for ${
+                err.message
+              }`
+            );
+            continue;
           }
 
-          const tokenWithFactoryScript: NRC721.TokenWithFactoryScript = await this.generateNRC721Token(cell, layer2ToAddress);
+          const tokenWithFactoryScript: NRC721.TokenWithFactoryScript =
+            await this.generateNRC721Token(cell, layer2ToAddress);
           let isSaved;
           try {
             isSaved = await this.query.saveIfNotExists(tokenWithFactoryScript);
@@ -122,7 +128,9 @@ export class NFTCellCollector extends BaseRunner {
             );
           } else {
             console.warn(
-              `NRC721 token ${this.printOutPoint(cell.out_point)} already exists!`
+              `NRC721 token ${this.printOutPoint(
+                cell.out_point
+              )} already exists!`
             );
           }
         }
@@ -142,10 +150,12 @@ export class NFTCellCollector extends BaseRunner {
     return `{tx_hash: ${outPoint.tx_hash}, index: ${outPoint.index}}`;
   }
 
-  private async generateNRC721Token(cell: CellResult, layer2ToAddress: HexString): Promise<NRC721.TokenWithFactoryScript> {
-    const { factoryScript, layer1TokenId } = NRC721.Funcs.toFactoryScriptAndTokenId(
-      cell.output.type!.args
-    );
+  private async generateNRC721Token(
+    cell: CellResult,
+    layer2ToAddress: HexString
+  ): Promise<NRC721.TokenWithFactoryScript> {
+    const { factoryScript, layer1TokenId } =
+      NRC721.Funcs.toFactoryScriptAndTokenId(cell.output.type!.args);
     const factoryCell = await this.indexerRPC.get_factory_cell(factoryScript);
     const tokenInfo = parseFactoryData(factoryCell.output_data);
 
@@ -160,7 +170,7 @@ export class NFTCellCollector extends BaseRunner {
       base_uri: tokenInfo.baseUri,
 
       extra_data: tokenInfo.extraData,
-    }
+    };
 
     const token: NRC721.Token.Struct = {
       out_point: {
@@ -194,14 +204,14 @@ export class NFTCellCollector extends BaseRunner {
 }
 
 export function parseLayer2Address(data: HexString): HexString {
-  if (data.length < 2 + 24*2) {
-    throw new Error("No layer2 address found!")
+  if (data.length < 2 + 24 * 2) {
+    throw new Error("No layer2 address found!");
   }
 
   const addressSuffix = data.slice(-48);
   if (addressSuffix.slice(0, 8) !== layer2AddressHeader.slice(2)) {
-    throw new Error("No layer2 address header found!")
+    throw new Error("No layer2 address header found!");
   }
 
-  return "0x" + addressSuffix.slice(8)
+  return "0x" + addressSuffix.slice(8);
 }
