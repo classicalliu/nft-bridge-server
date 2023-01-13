@@ -56,7 +56,7 @@ export class NftCellCollector extends BaseRunner {
 
   public async poll() {
     const currentIndexerTip: bigint = await this.getIndexerTipNumber();
-    const blockRangeMax = currentIndexerTip + 1n;
+    const blockRangeMax = currentIndexerTip - BigInt(Config.confirmationsThreshold);
 
     if (blockRangeMax <= this.lastIndexerTip) {
       return 500;

@@ -14,6 +14,7 @@ export const Config = {
   minerPrivateKey: getRequired("MINER_PRIVATE_KEY"),
   godwokenRpc: getRequired("GODWOKEN_RPC"),
   isMainnet: getOptional("IS_MAINNET") === "true" ? true : false,
+  confirmationsThreshold: 24,
 };
 
 function getRequired(name: string): string {
