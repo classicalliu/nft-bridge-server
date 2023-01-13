@@ -13,6 +13,7 @@ export const Config = {
   databaseUrl: getRequired("DATABASE_URL"),
   minerPrivateKey: getRequired("MINER_PRIVATE_KEY"),
   godwokenRpc: getRequired("GODWOKEN_RPC"),
+  isMainnet: getOptional("IS_MAINNET") === "true" ? true : false,
 };
 
 function getRequired(name: string): string {

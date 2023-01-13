@@ -1,4 +1,4 @@
-import { initializeConfig, predefined } from "@ckb-lumos/config-manager/lib";
+import { predefined } from "@ckb-lumos/config-manager";
 import { parseAddress } from "@ckb-lumos/helpers";
 import { Config } from "../base/config";
 import { CkbIndexerRpc } from "../rpc";
@@ -35,9 +35,8 @@ export class NftCellCollector extends BaseRunner {
 
     this.indexerRPC = new CkbIndexerRpc(Config.ckbIndexerRpc);
 
-    // TODO: check is mainnet ? or others
-    initializeConfig(predefined.AGGRON4);
-    const script = parseAddress(Config.minerLayer1Address);
+    const lumosConfig = Config.isMainnet ? predefined.LINA : predefined.AGGRON4;
+    const script = parseAddress(Config.minerLayer1Address, { config: lumosConfig });
 
     this.minerLockScript = {
       code_hash: script.codeHash,
