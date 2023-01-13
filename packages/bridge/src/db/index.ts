@@ -52,6 +52,13 @@ export class NRC721Query {
     }
   }
 
+  async getTokenTipBlockNumber(): Promise<bigint> {
+    const blockNumber = await this.knex<NRC721.Token.DBStruct>(this.tokenTableName).max("block_number");
+
+    const tip = blockNumber[0].max;
+    return BigInt(tip)
+  }
+
   async getOneByOutPoint(outPoint: OutPoint): Promise<NRC721.TokenWithFactoryScript | undefined> {
     const token = await this.knex<NRC721.Token.DBStruct>(this.tokenTableName) 
       .where({

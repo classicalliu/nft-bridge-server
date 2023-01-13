@@ -54,6 +54,15 @@ export class NFTCellCollector extends BaseRunner {
     return data.startsWith(NRC721_TOKEN_OUTPUT_DATA_HEADER);
   }
 
+  public async startForever() {
+    this.query.getTokenTipBlockNumber()
+      .then((tipBlockNumber) => {
+        console.log("from db tip block number:", tipBlockNumber)
+        this.lastIndexerTip = tipBlockNumber
+        return super.startForever()
+      })
+  }
+
   public async poll() {
     const currentIndexerTip: bigint = await this.getIndexerTipNumber();
     const blockRangeMax = currentIndexerTip - BigInt(Config.confirmationsThreshold);
