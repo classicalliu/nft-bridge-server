@@ -58,7 +58,10 @@ export class NRC721Query {
       NRC721.Token.DB_TABLE_NAME
     ).max("block_number");
 
-    const tip = blockNumber[0].max;
+    const tip: string | null = blockNumber[0].max;
+    if (tip == null) {
+      return 0n;
+    }
     return BigInt(tip);
   }
 
