@@ -40,7 +40,7 @@ export class Miner extends BaseRunner {
       const isMinted = await this.isMinted(token.layer2_token_id);
       if (isMinted) {
         console.warn(
-          `layer2 token already mined before: ${token.layer2_token_id}, updated status.`
+          `layer2 token already minted before: ${token.layer2_token_id}, updated status.`
         );
         await this.query.updateToMined(token.layer2_token_id);
         continue;
@@ -50,17 +50,17 @@ export class Miner extends BaseRunner {
           factoryScript.base_uri,
           token.layer1_token_id
         );
-        await this.mine(
+        await this.mint(
           token.layer2_to_address,
           token.layer2_token_id,
           factoryScript.name,
           factoryScript.symbol,
           uri
         );
-        console.log(`layer2 token mined: ${token.layer2_token_id}`);
+        console.log(`layer2 token minted: ${token.layer2_token_id}`);
         await this.query.updateToMined(token.layer2_token_id);
       } catch (err) {
-        console.error(`layer2 token mine failed: ${token.layer2_token_id}`);
+        console.error(`layer2 token mint failed: ${token.layer2_token_id}`);
         throw err;
       }
     }
@@ -71,7 +71,7 @@ export class Miner extends BaseRunner {
     return await this.nftContract.exists(tokenId.toString());
   }
 
-  private async mine(
+  private async mint(
     toAddress: string,
     tokenId: bigint,
     name: string,
