@@ -4,7 +4,7 @@ import { Config } from "../base/config";
 import { CkbIndexerRpc } from "../rpc";
 import { HexString } from "@ckb-lumos/base";
 import { NRC721Query } from "../db";
-import { NRC721Token, toFactoryScriptAndTokenId } from "../db/types";
+import { NRC721FactoryScript, NRC721Token, NRC721TokenWithFactoryScript, toFactoryScriptAndTokenId } from "../db/types";
 import { parseFactoryData } from "../base/utils";
 import { Blake2bHasher } from "../base/blake2b";
 import { OutPoint, CellResult, SearchKey, Script } from "../types";
@@ -80,10 +80,10 @@ export class NftCellCollector extends BaseRunner {
       for (let i = 0; i < cells.objects.length; i++) {
         const cell: CellResult = cells.objects[i];
         if (this.isNrc721Cell(cell.output_data)) {
-          const token: NRC721Token = await this.generateNRC721Token(cell);
+          const tokenWithFactoryScript: NRC721TokenWithFactoryScript = await this.generateNRC721Token(cell);
           let isSaved;
           try {
-            isSaved = await this.query.saveIfNotExists(token);
+            isSaved = await this.query.saveIfNotExists(tokenWithFactoryScript);
           } catch (err) {
             console.error(
               `NRC721 token ${this.printOutPoint(cell.out_point)} save failed!`
@@ -116,12 +116,24 @@ export class NftCellCollector extends BaseRunner {
     return `{tx_hash: ${outPoint.tx_hash}, index: ${outPoint.index}}`;
   }
 
-  private async generateNRC721Token(cell: CellResult): Promise<NRC721Token> {
+  private async generateNRC721Token(cell: CellResult): Promise<NRC721TokenWithFactoryScript> {
     const { factoryScript, layer1TokenId } = toFactoryScriptAndTokenId(
       cell.output.type!.args
     );
     const factoryCell = await this.indexerRPC.get_factory_cell(factoryScript);
     const tokenInfo = parseFactoryData(factoryCell.output_data);
+
+    const factory: NRC721FactoryScript = {
+      out_point: factoryCell.out_point,
+
+      script: factoryScript,
+
+      name: tokenInfo.name,
+      symbol: tokenInfo.symbol,
+      base_uri: tokenInfo.baseUri,
+
+      extra_data: tokenInfo.extraData,
+    }
 
     // TODO: parse layer2 to_address from cell data
     const layer2ToAddress = "0x" + "11".repeat(20);
@@ -133,22 +145,19 @@ export class NftCellCollector extends BaseRunner {
       },
       lock_script: cell.output.lock,
       type_script: cell.output.type!,
-      factory_script: factoryScript,
       layer1_token_id: layer1TokenId,
 
       output_data: cell.output_data,
-
-      name: tokenInfo.name,
-      symbol: tokenInfo.symbol,
-      uri: tokenInfo.baseUri + "/" + layer1TokenId.toString(),
-      extra_data: tokenInfo.extraData,
 
       layer2_has_mined: false,
       layer2_token_id: this.getLayer2TokenId(cell.output.type!.args),
       layer2_to_address: layer2ToAddress,
     };
 
-    return token;
+    return {
+      token,
+      factory_script: factory,
+    };
   }
 
   // using layer1 type script args blake2b hash 0-20 bytes as layer2 token id

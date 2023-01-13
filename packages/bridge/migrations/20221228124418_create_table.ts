@@ -6,6 +6,38 @@ import { Knex } from "knex";
 // u256: decimal(80, 0)
 export async function up(knex: Knex): Promise<void> {
   await knex.schema
+    .createTable("nrc721_factory_scripts", (table: Knex.TableBuilder) => {
+      table.bigIncrements("id");
+
+      table.binary("out_point_tx_hash").notNullable();
+      table.integer("out_point_index").notNullable();
+
+      table.unique([
+        "out_point_tx_hash",
+        "out_point_index",
+      ])
+
+      table.binary("code_hash").notNullable();
+      table.tinyint("hash_type").notNullable();
+      table.binary("args").notNullable();
+
+      table.unique([
+        "code_hash",
+        "hash_type",
+        "args",
+      ])
+
+      // token info
+      table.string("name").notNullable();
+      table.string("symbol").notNullable();
+      table.string("base_uri").notNullable();
+      table.string("extra_data").nullable();
+
+      table.timestamp("created_at").notNullable();
+      table.timestamp("updated_at").notNullable();
+    })
+
+  await knex.schema
   .createTable("nrc721_tokens", (table: Knex.TableBuilder) => {
     table.bigIncrements("id");
 
@@ -23,26 +55,17 @@ export async function up(knex: Knex): Promise<void> {
 
     table.binary("type_script_code_hash").notNullable();
     table.tinyint("type_script_hash_type").notNullable();
-    table.binary("factory_script_code_hash").notNullable();
-    table.tinyint("factory_script_hash_type").notNullable();
-    table.binary("factory_script_args").notNullable();
+    
     table.binary("layer1_token_id").notNullable();
+    table.decimal("factory_id", 20, 0).notNullable();
 
     table.unique([
-      "factory_script_code_hash",
-      "factory_script_hash_type",
-      "factory_script_args",
-      "layer1_token_id",
+      "factory_id",
+      "layer1_token_id"
     ])
-    
+
     table.binary("output_data").notNullable();
     
-    // token info
-    table.string("name").notNullable();
-    table.string("symbol").notNullable();
-    table.string("uri").notNullable();
-    table.string("extra_data").nullable();
-
     // bridge info
     table.boolean("layer2_has_mined").notNullable();
     // uint256
@@ -56,5 +79,7 @@ export async function up(knex: Knex): Promise<void> {
 
 
 export async function down(knex: Knex): Promise<void> {
+  await knex.schema.dropTable("nrc721_tokens")
+  await knex.schema.dropTable("nrc721_factory_scripts")
 }
 
