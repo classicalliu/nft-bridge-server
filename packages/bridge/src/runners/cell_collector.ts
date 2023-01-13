@@ -21,7 +21,7 @@ const layer2AddressHeader: HexString = (() => {
 
 console.log("layer2 address header:", layer2AddressHeader);
 
-export class NftCellCollector extends BaseRunner {
+export class NFTCellCollector extends BaseRunner {
   private query: NRC721Query;
   private lastIndexerTip: bigint;
   private indexerRPC: CkbIndexerRpc;
