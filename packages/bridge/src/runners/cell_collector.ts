@@ -12,6 +12,15 @@ import { BaseRunner } from "./base_runner";
 
 const NRC721_TOKEN_OUTPUT_DATA_HEADER = "0x0ddeff3e8ee03cbf6a2c6920d05c381e";
 
+const layer2AddressHeader: HexString = (() => {
+  const blake2b = new Blake2bHasher()
+  blake2b.update(Buffer.from("NRC-721-ADDRESS", "utf-8"))
+  // return first 4 bytes
+  return blake2b.digestHex().slice(0, 10)
+})()
+
+console.log("layer2 address header:", layer2AddressHeader);
+
 export class NftCellCollector extends BaseRunner {
   private query: NRC721Query;
   private lastIndexerTip: bigint;
@@ -80,7 +89,16 @@ export class NftCellCollector extends BaseRunner {
       for (let i = 0; i < cells.objects.length; i++) {
         const cell: CellResult = cells.objects[i];
         if (this.isNrc721Cell(cell.output_data)) {
-          const tokenWithFactoryScript: NRC721TokenWithFactoryScript = await this.generateNRC721Token(cell);
+          // Skip cell not include layer2 to address info
+          let layer2ToAddress;
+          try {
+            layer2ToAddress = parseLayer2Address(cell.output_data)
+          } catch (err: any) {
+            console.error(`skip cell: ${this.printOutPoint(cell.out_point)} for ${err.message}`)
+            continue
+          }
+
+          const tokenWithFactoryScript: NRC721TokenWithFactoryScript = await this.generateNRC721Token(cell, layer2ToAddress);
           let isSaved;
           try {
             isSaved = await this.query.saveIfNotExists(tokenWithFactoryScript);
@@ -116,7 +134,7 @@ export class NftCellCollector extends BaseRunner {
     return `{tx_hash: ${outPoint.tx_hash}, index: ${outPoint.index}}`;
   }
 
-  private async generateNRC721Token(cell: CellResult): Promise<NRC721TokenWithFactoryScript> {
+  private async generateNRC721Token(cell: CellResult, layer2ToAddress: HexString): Promise<NRC721TokenWithFactoryScript> {
     const { factoryScript, layer1TokenId } = toFactoryScriptAndTokenId(
       cell.output.type!.args
     );
@@ -134,9 +152,6 @@ export class NftCellCollector extends BaseRunner {
 
       extra_data: tokenInfo.extraData,
     }
-
-    // TODO: parse layer2 to_address from cell data
-    const layer2ToAddress = "0x" + "11".repeat(20);
 
     const token: NRC721Token = {
       out_point: {
@@ -166,4 +181,17 @@ export class NftCellCollector extends BaseRunner {
     const digest = new Blake2bHasher().updateHex(nftTypeScriptArgs).digestHex();
     return BigInt(digest.slice(0, 42));
   }
+}
+
+export function parseLayer2Address(data: HexString): HexString {
+  if (data.length < 2 + 24*2) {
+    throw new Error("No layer2 address found!")
+  }
+
+  const addressSuffix = data.slice(-48);
+  if (addressSuffix.slice(0, 8) !== layer2AddressHeader.slice(2)) {
+    throw new Error("No layer2 address header found!")
+  }
+
+  return "0x" + addressSuffix.slice(8)
 }
