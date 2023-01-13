@@ -1,0 +1,5 @@
+.git
+node_modules
+npm-debug
+packages/bridge/.env
+packages/bridge/lib
