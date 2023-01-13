@@ -142,6 +142,7 @@ export class NFTCellCollector extends BaseRunner {
 
     const factory: NRC721.FactoryScript.Struct = {
       out_point: factoryCell.out_point,
+      block_number: BigInt(factoryCell.block_number),
 
       script: factoryScript,
 
@@ -157,6 +158,7 @@ export class NFTCellCollector extends BaseRunner {
         tx_hash: cell.out_point.tx_hash,
         index: cell.out_point.index,
       },
+      block_number: BigInt(cell.block_number),
       lock_script: cell.output.lock,
       type_script: cell.output.type!,
       layer1_token_id: layer1TokenId,

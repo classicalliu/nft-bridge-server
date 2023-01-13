@@ -12,6 +12,8 @@ export async function up(knex: Knex): Promise<void> {
       table.binary("out_point_tx_hash").notNullable();
       table.integer("out_point_index").notNullable();
 
+      table.decimal("block_number", 20, 0).notNullable();
+
       table.unique([
         "out_point_tx_hash",
         "out_point_index",
@@ -43,6 +45,8 @@ export async function up(knex: Knex): Promise<void> {
 
     table.binary("out_point_tx_hash").notNullable();
     table.integer("out_point_index").notNullable();
+
+    table.decimal("block_number", 20, 0).notNullable();
 
     table.unique([
       "out_point_tx_hash",

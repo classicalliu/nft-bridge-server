@@ -12,6 +12,7 @@ export namespace NRC721 {
       id?: bigint
     
       out_point: OutPoint;
+      block_number: bigint;
     
       script: Script
     
@@ -29,6 +30,7 @@ export namespace NRC721 {
     
       out_point_tx_hash: Buffer;
       out_point_index: number;
+      block_number: string
     
       code_hash: Buffer;
       hash_type: number;
@@ -52,6 +54,7 @@ export namespace NRC721 {
           tx_hash: bufferToHex(t.out_point_tx_hash),
           index: "0x" + t.out_point_index.toString(16),
         },
+        block_number: toBigInt(t.block_number),
         script: {
           code_hash: bufferToHex(t.code_hash),
           hash_type: toHashType(t.hash_type),
@@ -75,6 +78,7 @@ export namespace NRC721 {
     
         out_point_tx_hash: hexToBuffer(t.out_point.tx_hash),
         out_point_index: +t.out_point.index,
+        block_number: t.block_number.toString(),
     
         code_hash: hexToBuffer(t.script.code_hash),
         hash_type: fromHashType(t.script.hash_type),
@@ -95,6 +99,7 @@ export namespace NRC721 {
     export interface Struct {
       id?: bigint;
       out_point: OutPoint;
+      block_number: bigint;
     
       lock_script: Script;
       type_script: Script;
@@ -117,6 +122,7 @@ export namespace NRC721 {
       id?: string;
       out_point_tx_hash: Buffer;
       out_point_index: number;
+      block_number: string;
     
       lock_script_code_hash: Buffer;
       lock_script_hash_type: number;
@@ -149,6 +155,7 @@ export namespace NRC721 {
           tx_hash: bufferToHex(t.out_point_tx_hash),
           index: "0x" + t.out_point_index.toString(16),
         },
+        block_number: toBigInt(t.block_number),
         lock_script: {
           code_hash: bufferToHex(t.lock_script_code_hash),
           hash_type: toHashType(t.lock_script_hash_type),
@@ -178,6 +185,7 @@ export namespace NRC721 {
         id: t.id?.toString(),
         out_point_tx_hash: hexToBuffer(t.out_point.tx_hash),
         out_point_index: +t.out_point.index,
+        block_number: t.block_number.toString(),
     
         lock_script_code_hash: hexToBuffer(t.lock_script.code_hash),
         lock_script_hash_type: fromHashType(t.lock_script.hash_type),
