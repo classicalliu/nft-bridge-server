@@ -3,6 +3,7 @@ import { BaseRunner } from "./base_runner";
 import { Config } from "../base/config";
 import { NRC721Query } from "../db";
 import { NRC721 } from "../db/types";
+import { logger } from "../base/logger";
 
 const abi = [
   "function mint(address to, uint256 tokenId, string memory name, string memory symbol, string memory uri) external",
@@ -39,7 +40,7 @@ export class Miner extends BaseRunner {
     } of this.query.collectNonMinedTokens()) {
       const isMinted = await this.isMinted(token.layer2_token_id);
       if (isMinted) {
-        console.warn(
+        logger.warn(
           `layer2 token already minted before: ${token.layer2_token_id}, updated status.`
         );
         await this.query.updateToMined(token.layer2_token_id);
@@ -57,10 +58,10 @@ export class Miner extends BaseRunner {
           factoryScript.symbol,
           uri
         );
-        console.log(`layer2 token minted: ${token.layer2_token_id}`);
+        logger.info(`layer2 token minted: ${token.layer2_token_id}`);
         await this.query.updateToMined(token.layer2_token_id);
       } catch (err) {
-        console.error(`layer2 token mint failed: ${token.layer2_token_id}`);
+        logger.error(`layer2 token mint failed: ${token.layer2_token_id}`);
         throw err;
       }
     }

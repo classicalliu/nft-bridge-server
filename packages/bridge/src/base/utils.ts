@@ -1,5 +1,6 @@
 import { HexString } from "@ckb-lumos/base";
 import { Blake2bHasher } from "./blake2b";
+import { logger } from "./logger";
 
 const headerHash: HexString = (() => {
   const blake2b16 = new Blake2bHasher(16, null);
@@ -7,7 +8,7 @@ const headerHash: HexString = (() => {
   return blake2b16.digestHex();
 })();
 
-console.log("factory header hash:", headerHash);
+logger.info("factory header hash:", headerHash);
 
 function isNrc721Cell(data: HexString): boolean {
   if (data.length < headerHash.length) {

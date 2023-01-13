@@ -9,6 +9,7 @@ import { Blake2bHasher } from "../base/blake2b";
 import { OutPoint, CellResult, SearchKey, Script } from "../types";
 import { BaseRunner } from "./base_runner";
 import { NRC721 } from "../db/types";
+import { logger } from "../base/logger";
 
 const NRC721_TOKEN_OUTPUT_DATA_HEADER = "0x0ddeff3e8ee03cbf6a2c6920d05c381e";
 
@@ -19,7 +20,7 @@ const layer2AddressHeader: HexString = (() => {
   return blake2b.digestHex().slice(0, 10);
 })();
 
-console.log("layer2 address header:", layer2AddressHeader);
+logger.info("layer2 address header:", layer2AddressHeader);
 
 export class NFTCellCollector extends BaseRunner {
   private query: NRC721Query;
@@ -58,7 +59,7 @@ export class NFTCellCollector extends BaseRunner {
 
   public async startForever() {
     const tipBlockNumber = await this.query.getTokenTipBlockNumber();
-    console.log("from db tip block number:", tipBlockNumber);
+    logger.info("from db tip block number:", tipBlockNumber);
     this.lastIndexerTip = tipBlockNumber;
     return super.startForever();
   }
@@ -103,7 +104,7 @@ export class NFTCellCollector extends BaseRunner {
           try {
             layer2ToAddress = parseLayer2Address(cell.output_data);
           } catch (err: any) {
-            console.error(
+            logger.error(
               `skip cell: ${this.printOutPoint(cell.out_point)} for ${
                 err.message
               }`
@@ -117,17 +118,17 @@ export class NFTCellCollector extends BaseRunner {
           try {
             isSaved = await this.query.saveIfNotExists(tokenWithFactoryScript);
           } catch (err) {
-            console.error(
+            logger.error(
               `NRC721 token ${this.printOutPoint(cell.out_point)} save failed!`
             );
             throw err;
           }
           if (isSaved) {
-            console.log(
+            logger.info(
               `NRC721 token ${this.printOutPoint(cell.out_point)} saved!`
             );
           } else {
-            console.warn(
+            logger.warn(
               `NRC721 token ${this.printOutPoint(
                 cell.out_point
               )} already exists!`

@@ -1,3 +1,5 @@
+import { logger } from "../base/logger";
+
 export abstract class BaseRunner {
   protected isRunning: boolean;
   protected livenessCheckIntervalSeconds: number;
@@ -11,7 +13,7 @@ export abstract class BaseRunner {
     await this.start();
     setInterval(async () => {
       if (!this.running()) {
-        console.error(
+        logger.error(
           `${this.constructor.name} has stopped, maybe check the log?`
         );
         await this.start();
@@ -47,7 +49,7 @@ export abstract class BaseRunner {
         this.scheduleLoop(timeout);
       })
       .catch((e) => {
-        console.error(`Error occurs: ${e} ${e.stack}, stopping!`);
+        logger.error(`Error occurs: ${e} ${e.stack}, stopping!`);
         this.stop();
       });
   }
