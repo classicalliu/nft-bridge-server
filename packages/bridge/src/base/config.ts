@@ -8,7 +8,6 @@ export const Config = {
   ckbIndexerRpc: getRequired("CKB_INDEXER_RPC"),
   minerLayer1Address: getRequired("MINER_LAYER1_ADDRESS"),
   nftContractAddress: getRequired("NFT_CONTRACT_ADDRESS"),
-  layer2MinerAddress: getRequired("LAYER2_MINER_ADDRESS"),
   pgPoolMax: getOptional("PG_POOL_MAX"),
   databaseUrl: getRequired("DATABASE_URL"),
   minerPrivateKey: getRequired("MINER_PRIVATE_KEY"),
