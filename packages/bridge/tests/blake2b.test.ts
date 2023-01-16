@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { Blake2bHasher } from "../src/blake2b";
+import { Blake2bHasher } from "../src/base/blake2b";
 
 test("empty message", () => {
   const message = "0x";
@@ -20,4 +20,12 @@ test("nrc721 header", () => {
   const result = new Blake2bHasher(16, null).update(message).digestHex();
 
   assert.strictEqual(result, digest);
+});
+
+test("layer2 to address header", () => {
+  const message = Buffer.from("NRC-721-ADDRESS", "utf-8");
+  const header = "0x037498f0";
+
+  const result = new Blake2bHasher().update(message).digestHex().slice(0, 10);
+  assert.strictEqual(result, header);
 });

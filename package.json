@@ -12,7 +12,8 @@
     "fmt:common": "prettier --write .eslintrc.js package.json tsconfig.json",
     "fmt": "yarn workspaces run fmt && yarn run fmt:common",
     "lint": "yarn workspaces run lint",
-    "start": "yarn workspace @godwoken-nft-bridge/bridge run start"
+    "start": "yarn workspace @godwoken-nft-bridge/bridge run start",
+    "test": "yarn workspaces run test"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",

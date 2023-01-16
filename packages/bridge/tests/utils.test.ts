@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { parseFactoryData } from "../src/utils";
+import { parseFactoryData } from "../src/base/utils";
 
 test("parseFactoryData", () => {
   const data =
