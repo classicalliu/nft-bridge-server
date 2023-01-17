@@ -118,6 +118,7 @@ export namespace NRC721 {
       layer1_token_id: HexString;
 
       output_data: HexString;
+      data?: string;
 
       factory_id?: bigint;
 
@@ -146,6 +147,7 @@ export namespace NRC721 {
 
       layer1_token_id: Buffer;
       output_data: Buffer;
+      data?: string;
 
       layer2_has_mined: boolean;
       layer2_token_id: string;
@@ -181,6 +183,7 @@ export namespace NRC721 {
         },
         layer1_token_id: tokenId,
         output_data: bufferToHex(t.output_data),
+        data: t.data,
 
         layer2_has_mined: t.layer2_has_mined,
         layer2_token_id: toBigInt(t.layer2_token_id),
@@ -209,6 +212,7 @@ export namespace NRC721 {
 
         layer1_token_id: hexToBuffer(t.layer1_token_id),
         output_data: hexToBuffer(t.output_data),
+        data: t.data,
 
         layer2_has_mined: t.layer2_has_mined,
         layer2_token_id: t.layer2_token_id.toString(),

@@ -10,6 +10,7 @@ import { OutPoint, CellResult, SearchKey, Script } from "../types";
 import { BaseRunner } from "./base_runner";
 import { NRC721 } from "../db/types";
 import { logger } from "../base/logger";
+import { parseNFTData } from "../base/parse_nft_data";
 
 const NRC721_TOKEN_OUTPUT_DATA_HEADER = "0x0ddeff3e8ee03cbf6a2c6920d05c381e";
 
@@ -73,6 +74,7 @@ export class NFTCellCollector extends BaseRunner {
       return 500;
     }
 
+    logger.debug(`scan from ${this.lastIndexerTip} to ${blockRangeMax}`);
     const searchKey: SearchKey = {
       script: this.minerLockScript,
       script_type: "lock",
@@ -160,6 +162,8 @@ export class NFTCellCollector extends BaseRunner {
     const factoryCell = await this.indexerRPC.get_factory_cell(factoryScript);
     const tokenInfo = parseFactoryData(factoryCell.output_data);
 
+    const tokenData = parseNFTData(cell.output_data);
+
     const factory: NRC721.FactoryScript.Struct = {
       out_point: factoryCell.out_point,
       block_number: BigInt(factoryCell.block_number),
@@ -184,6 +188,7 @@ export class NFTCellCollector extends BaseRunner {
       layer1_token_id: layer1TokenId,
 
       output_data: cell.output_data,
+      data: tokenData,
 
       layer2_has_mined: false,
       layer2_token_id: this.getLayer2TokenId(cell.output.type!.args),

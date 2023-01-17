@@ -6,7 +6,7 @@ import { NRC721 } from "../db/types";
 import { logger } from "../base/logger";
 
 const abi = [
-  "function mint(address to, uint256 tokenId, string memory name, string memory symbol, string memory uri) external",
+  "function mint(address to, uint256 tokenId, string memory name, string memory symbol, string memory uri, string memory extraData, string memory data) external",
   "function exists(uint256 tokenId) external view returns (bool)",
 ];
 
@@ -56,7 +56,9 @@ export class Miner extends BaseRunner {
           token.layer2_token_id,
           factoryScript.name,
           factoryScript.symbol,
-          uri
+          uri,
+          factoryScript.extra_data || "",
+          token.data || ""
         );
         logger.info(`layer2 token minted: ${token.layer2_token_id}`);
         await this.query.updateToMined(token.layer2_token_id);
@@ -77,11 +79,13 @@ export class Miner extends BaseRunner {
     tokenId: bigint,
     name: string,
     symbol: string,
-    uri: string
+    uri: string,
+    extraData: string,
+    data: string
   ) {
     const tx = await this.nftContract
       .connect(this.signer)
-      .mint(toAddress, tokenId.toString(), name, symbol, uri);
+      .mint(toAddress, tokenId.toString(), name, symbol, uri, extraData, data);
 
     const result = await tx.wait();
     return result;

@@ -69,6 +69,7 @@ export async function up(knex: Knex): Promise<void> {
     ])
 
     table.binary("output_data").notNullable();
+    table.string("data").nullable();
     
     // bridge info
     table.boolean("layer2_has_mined").notNullable();
