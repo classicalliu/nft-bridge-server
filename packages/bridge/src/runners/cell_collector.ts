@@ -15,7 +15,7 @@ const NRC721_TOKEN_OUTPUT_DATA_HEADER = "0x0ddeff3e8ee03cbf6a2c6920d05c381e";
 
 const layer2AddressHeader: HexString = (() => {
   const blake2b = new Blake2bHasher();
-  blake2b.update(Buffer.from("NRC-721-ADDRESS", "utf-8"));
+  blake2b.update(Buffer.from("GODWOKEN-NFT-BRIDGE-TARGET-ADDRESS", "utf-8"));
   // return first 4 bytes
   return blake2b.digestHex().slice(0, 10);
 })();

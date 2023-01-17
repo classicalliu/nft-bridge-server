@@ -23,8 +23,8 @@ test("nrc721 header", () => {
 });
 
 test("layer2 to address header", () => {
-  const message = Buffer.from("NRC-721-ADDRESS", "utf-8");
-  const header = "0x037498f0";
+  const message = Buffer.from("GODWOKEN-NFT-BRIDGE-TARGET-ADDRESS", "utf-8");
+  const header = "0x9beee9f6";
 
   const result = new Blake2bHasher().update(message).digestHex().slice(0, 10);
   assert.strictEqual(result, header);
