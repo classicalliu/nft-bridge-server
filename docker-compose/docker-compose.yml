@@ -15,7 +15,7 @@ services:
       - ./postgres/data:/var/lib/postgresql/data
 
   nft-bridge-server:
-    image: ghcr.io/classicalliu/godwoken-nft-bridge-server:add-bridge-2b7b5a2
+    image: ghcr.io/classicalliu/godwoken-nft-bridge-server:add-bridge-dc96fa5
     init: true
     volumes:
       - ./.env:/nft-bridge-server/packages/bridge/.env
