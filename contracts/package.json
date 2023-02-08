@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "fmt": "prettier --write {scripts,test}/* package.json tsconfig.json"
+    "fmt": "prettier --write {scripts,test,tasks}/* package.json tsconfig.json"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
