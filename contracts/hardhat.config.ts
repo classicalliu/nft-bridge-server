@@ -4,22 +4,25 @@ import "@openzeppelin/hardhat-upgrades";
 
 import "./tasks"
 
+const OWNER_PK = process.env.OWNER_PK;
+const MINER_PK = process.env.MINER_PK
+
+const accounts = [];
+if (OWNER_PK && MINER_PK) {
+  accounts.push(OWNER_PK)
+  accounts.push(MINER_PK)
+}
+
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
   networks: {
     gw_dev_v1: {
       url: `http://localhost:8024`,
-      accounts: [
-        process.env.OWNER_PK || "",
-        process.env.MINER_PK || "",
-      ],
+      accounts: accounts,
     },
     gw_testnet_v1: {
       url: `https://v1.testnet.godwoken.io/rpc/instant-finality-hack`,
-      accounts: [
-        process.env.OWNER_PK || "",
-        process.env.MINER_PK || "",
-      ],
+      accounts: accounts,
       chainId: 71401,
     },
     hardhat_node: {
