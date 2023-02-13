@@ -152,7 +152,7 @@ describe("NFTUpgradeable", () => {
       tokenSymbol
     );
     assert.strictEqual(
-      await contract.connect(anotherUser.address).tokenUri(tokenId),
+      await contract.connect(anotherUser.address).tokenURI(tokenId),
       tokenUri
     );
     assert.strictEqual(
@@ -395,9 +395,9 @@ describe("NFTUpgradeable", () => {
       );
 
     const newTokenUri = "http://test.com/2";
-    await contract.connect(miner).setTokenUri(tokenId, newTokenUri);
+    await contract.connect(miner).setTokenURI(tokenId, newTokenUri);
 
-    const result = await contract.tokenUri(tokenId);
+    const result = await contract.tokenURI(tokenId);
 
     assert.strictEqual(result, newTokenUri);
   });
@@ -421,7 +421,7 @@ describe("NFTUpgradeable", () => {
     const newTokenUri = "http://test.com/2";
 
     await assert.isRejected(
-      contract.connect(to).setTokenUri(tokenId, newTokenUri)
+      contract.connect(to).setTokenURI(tokenId, newTokenUri)
     );
   });
 });

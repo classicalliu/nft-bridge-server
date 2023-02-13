@@ -59,7 +59,7 @@ contract NFTUpgradeable is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         return tokenIdToSymbol[tokenId];
     }
 
-    function tokenUri(uint256 tokenId) public view returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         return tokenIdToUri[tokenId];
     }
 
@@ -79,7 +79,7 @@ contract NFTUpgradeable is ERC721EnumerableUpgradeable, OwnableUpgradeable {
         tokenIdToSymbol[tokenId] = newSymbol;
     }
 
-    function setTokenUri(uint256 tokenId, string memory newUri) external onlyMiner {
+    function setTokenURI(uint256 tokenId, string memory newUri) external onlyMiner {
         tokenIdToUri[tokenId] = newUri;
     }
 
