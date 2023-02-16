@@ -9,4 +9,7 @@ typechain-types
 cache
 artifacts
 
-.openzeppelin
+!.openzeppelin
+.openzeppelin/*
+!.openzeppelin/*-71401.json
+!.openzeppelin/*-71402.json

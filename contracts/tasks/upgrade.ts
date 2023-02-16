@@ -7,12 +7,10 @@ task("nft:upgrade", "Deploy NFT contract")
     const contractAddress = args.contractAddress;
 
     // TODO: Update to new version of contract
-    const NftContractVersion2 = await ethers.getContractFactory(
-      "NFTUpgradeableVersion2ForTest"
-    );
+    const NewNFTContract = await ethers.getContractFactory("NFTUpgradeable");
     const newContract = await upgrades.upgradeProxy(
       contractAddress,
-      NftContractVersion2
+      NewNFTContract
     );
     await newContract.deployed();
 
