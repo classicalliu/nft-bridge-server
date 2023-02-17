@@ -5,7 +5,7 @@ import { fromHashType, hexToBuffer, Script, OutPoint } from "../types";
 import { NRC721 } from "./types";
 
 const poolMax = Config.pgPoolMax || 20;
-const GLOBAL_KNEX = Knex({
+export const GLOBAL_KNEX = Knex({
   client: "postgresql",
   connection: {
     connectionString: Config.databaseUrl,

@@ -12,11 +12,12 @@
     ]
   },
   "scripts": {
-    "fmt": "prettier --write {src,tests}/**/* package.json tsconfig.json",
-    "lint": "eslint -c ../../.eslintrc.js \"{src,tests}/**/*.ts\"",
+    "fmt": "prettier --write {src,tests,scripts}/**/* package.json tsconfig.json",
+    "lint": "eslint -c ../../.eslintrc.js \"{src,tests,scripts}/**/*.ts\"",
     "build": "tsc",
     "test": "yarn mocha ./tests/*.test.ts",
-    "start": "yarn run build && node lib/index.js"
+    "start": "yarn run build && node lib/index.js",
+    "scripts:update_token_uri": "yarn ts-node scripts/update_token_uri"
   },
   "dependencies": {
     "@ckb-lumos/base": "^0.19.0",
