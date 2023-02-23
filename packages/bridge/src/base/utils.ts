@@ -42,7 +42,7 @@ export function parseFactoryData(data: HexString) {
   const baseUri = readNext("baseUri");
 
   let extraData = undefined;
-  if (offset > buf.length) {
+  if (buf.length > offset) {
     extraData = buf.toString("utf-8", offset);
   }
 
