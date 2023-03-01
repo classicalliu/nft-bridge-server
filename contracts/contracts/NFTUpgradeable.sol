@@ -90,4 +90,8 @@ contract NFTUpgradeable is ERC721EnumerableUpgradeable, OwnableUpgradeable {
     function setTokenData(uint256 tokenId, string memory newData) external onlyMiner {
         tokenIdToUri[tokenId] = newData;
     }
+
+    function burn(uint256 tokenId) external onlyMiner {
+        _burn(tokenId);
+    }
 }

@@ -424,4 +424,89 @@ describe("NFTUpgradeable", () => {
       contract.connect(to).setTokenURI(tokenId, newTokenUri)
     );
   });
+
+  it("burn", async () => {
+    const [_owner, miner, to] = await ethers.getSigners();
+    const contract = await deploy(miner.address);
+
+    await contract
+      .connect(miner)
+      .mint(
+        to.address,
+        tokenId,
+        tokenName,
+        tokenSymbol,
+        tokenUri,
+        extraData,
+        data
+      );
+
+    assert.isTrue(await contract.exists(tokenId));
+
+    await contract.connect(miner).burn(tokenId);
+
+    assert.isFalse(await contract.exists(tokenId));
+  });
+
+  it("burn not exists token", async () => {
+    const [_owner, miner, to] = await ethers.getSigners();
+    const contract = await deploy(miner.address);
+
+    assert.isFalse(await contract.exists(tokenId));
+
+    await assert.isRejected(
+      contract.connect(miner).burn(tokenId),
+      "invalid token ID"
+    );
+  });
+
+  it("burn by not miner", async () => {
+    const [_owner, miner, to] = await ethers.getSigners();
+    const contract = await deploy(miner.address);
+
+    assert.isFalse(await contract.exists(tokenId));
+
+    await assert.isRejected(contract.connect(to).burn(tokenId), "Not miner");
+  });
+
+  it("burn & remint", async () => {
+    const [_owner, miner, to, anotherTo] = await ethers.getSigners();
+    const contract = await deploy(miner.address);
+
+    await contract
+      .connect(miner)
+      .mint(
+        to.address,
+        tokenId,
+        tokenName,
+        tokenSymbol,
+        tokenUri,
+        extraData,
+        data
+      );
+
+    assert.isTrue(await contract.exists(tokenId));
+
+    await contract.connect(miner).burn(tokenId);
+
+    assert.isFalse(await contract.exists(tokenId));
+
+    const newTokenName = "2 name";
+    await contract
+      .connect(miner)
+      .mint(
+        anotherTo.address,
+        tokenId,
+        newTokenName,
+        tokenSymbol,
+        tokenUri,
+        extraData,
+        data
+      );
+
+    assert.isTrue(await contract.exists(tokenId));
+    const ownerOfToken = await contract.ownerOf(tokenId);
+    assert.strictEqual(ownerOfToken, anotherTo.address);
+    assert.strictEqual(await contract.tokenName(tokenId), newTokenName);
+  });
 });
