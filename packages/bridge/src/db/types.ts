@@ -229,7 +229,10 @@ export namespace NRC721 {
       baseUri: string,
       layer1TokenId: string
     ): string {
-      return baseUri + "/" + layer1TokenId;
+      const tokenId = layer1TokenId.startsWith("0x")
+        ? layer1TokenId.slice(2)
+        : layer1TokenId;
+      return baseUri + "/" + tokenId;
     }
 
     export function toTypeScriptArgs(
